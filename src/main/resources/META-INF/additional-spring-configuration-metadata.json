@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "app.column.separator",
+      "type": "java.lang.String",
+      "description": "Column separator."
+    },
+    {
+      "name": "app.batch.size",
+      "type": "java.lang.String",
+      "description": "Batch size."
+    }
+  ] }
