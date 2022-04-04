@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class FileUtil {
 
-    public static void write(String filePath, String content) throws IOException {
+    public static String write(String filePath, String content) throws IOException {
 
         File file = new File(filePath);
 
@@ -19,5 +19,6 @@ public class FileUtil {
         writer.append(content);
         writer.flush();
         writer.close();
+        return filePath;
     }
 }

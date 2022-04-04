@@ -20,14 +20,12 @@ public class CsvFilesGenerator extends Processor {
     private final BatchProcessor processor;
 
     private final Integer batchSize;
-    private final Set<String> fileNames;
     private String[] header;
 
     private final Logger logger = LoggerFactory.getLogger(CsvFilesGenerator.class);
 
     public CsvFilesGenerator(Integer batchSize, String columnSeparator) {
         this.batchSize = batchSize;
-        this.fileNames = new HashSet<>();
         this.processor = new BatchProcessor(columnSeparator);
     }
 
@@ -38,12 +36,10 @@ public class CsvFilesGenerator extends Processor {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             CSVReader csvReader = new CSVReader(reader);
             String [] line;
-            this.header = csvReader.readNext();
-            if(header.length != 9) {
-                throw new CsvValidationException("Invalid csv file.");
-            }
-            while ((line = csvReader.readNext()) != null) {
 
+            this.header = validate(csvReader.readNext());
+            while ((line = csvReader.readNext()) != null) {
+                validate(line);
                 lines.add(line);
 
                 if(lines.size() >= batchSize) {
@@ -58,14 +54,7 @@ public class CsvFilesGenerator extends Processor {
             processor.process(toProcess);
             logger.info("End reading file: " + file.getOriginalFilename());
         }
-        return getResponse(fileNames);
-    }
-
-    private Response getResponse(Set<String> fileNames) {
-        Response response = new Response();
-        response.setSuccess(true);
-        response.setCreatedFiles(fileNames);
-        return response;
+        return getResponse();
     }
 
     private HashMap<String, List<String[]>> getAsMap(Path path, ArrayList<String[]> lines) {

@@ -19,9 +19,8 @@ import org.taulia.service.CsvService;
 @OpenAPIDefinition(info = @Info(title = "Info",
         version = "0.1",
         description = "CSV API",
-        contact = @Contact(name = "Elka Ganeva", url = "https://")
-),
-        tags = @Tag(name = "CSV", description = "CSV processing"))
+        contact = @Contact(name = "Elka Ganeva")
+))
 public class CsvController {
 
     private final CsvService processor;
@@ -30,7 +29,7 @@ public class CsvController {
         this.processor = processor;
     }
 
-    @Operation(summary = "CSV", description = "", tags = {"CSV"})
+    @Operation(summary = "CSV to CSVs", description = "Splits a CSV invoices file by buyer", tags = {"CSV"})
     @PostMapping(value = "/csv", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json")
     public ResponseEntity<?> generateCsvFiles(@RequestPart MultipartFile file) throws Throwable {
         try {
@@ -40,7 +39,7 @@ public class CsvController {
         }
     }
 
-    @Operation(summary = "CSV", description = "", tags = {"XML"})
+    @Operation(summary = "CSV to XML and invoice images", description = "Converts CSV to XML and saves invoice images", tags = {"XML"})
     @PostMapping(value = "/xml", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json")
     public ResponseEntity<?> generateXml(@RequestPart MultipartFile file) throws Throwable {
         try {
