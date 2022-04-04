@@ -1,6 +1,7 @@
 package org.taulia.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ class CsvControllerTest {
                 .getResponse().getContentAsString();
         Response response = new ObjectMapper().readValue(result, Response.class);
         response.getCreatedFiles().forEach(f -> Assertions.assertTrue(new File(f).exists()));
-        removeCreatedFiles(response);
+        response.getCreatedFiles().forEach(f -> Assertions.assertTrue(new File(f).exists()));
     }
 
     @Test
@@ -70,7 +71,7 @@ class CsvControllerTest {
                 .getResponse().getContentAsString();
         Response response = new ObjectMapper().readValue(result, Response.class);
         response.getCreatedFiles().forEach(f -> Assertions.assertTrue(new File(f).exists()));
-        removeCreatedFiles(response);
+        response.getCreatedFiles().forEach(f -> Assertions.assertTrue(new File(f).exists()));
     }
 
     @Test
@@ -112,17 +113,23 @@ class CsvControllerTest {
         Assertions.assertEquals("Invalid csv file.", error.getMessage());
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void removeCreatedFiles(Response response) {
-        if(response.getCreatedFiles().size() > 0) {
-            File parentDirectory = new File(response.getCreatedFiles().iterator().next()).getParentFile();
-            File[] allContents = parentDirectory.listFiles();
-            if (allContents != null) {
-                for (File file : allContents) {
-                    file.delete();
+    @AfterEach
+    public void tierDown() {
+        File parent = new File(System.getProperty("user.home") + "\\taulia");
+        deleteFile(parent);
+    }
+
+    private void deleteFile(File directory) {
+
+        if(directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if(files != null) {
+                for(File file : files) {
+                    deleteFile(file);
                 }
             }
-            parentDirectory.delete();
         }
+        //noinspection ResultOfMethodCallIgnored
+        directory.delete();
     }
 }
